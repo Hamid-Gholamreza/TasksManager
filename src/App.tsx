@@ -16,15 +16,16 @@ export interface Note {
 
 function App() {
 
-
   const [newNote, setNewNote] = useState(false);
-  const [notesList, setNotesList] = useState<Note[]>(() => {
-    const storedNotes = localStorage.getItem('notesList');
-    return storedNotes ? JSON.parse(storedNotes).map((note: any) => ({
-      ...note,
-    })) : [];
-  });
-  const [count, setCount] = useState(notesList?.length);
+  const storedNotes = localStorage.getItem('notesList');
+  const parsedNotes = storedNotes ? JSON.parse(storedNotes) : [];
+  const listLength = parsedNotes.length;
+  const [notesList, setNotesList] = useState<Note[]>(parsedNotes);
+  const [count, setCount] = useState(parsedNotes.length);
+
+
+
+
 
   const initialNote: Note = {
     id: count,
@@ -41,9 +42,9 @@ function App() {
   const Notes = notesList.map((item: Note, index) => {
     return (
         <Draggable>
-            <div className='relative'>
+            <div className='w-[250px] h-fit relative'>
                 <StickyNote key={index} note={item} />
-                <button className='absolute top-0 left-[375px] bg-red-600 rounded-full text-white p-1'
+                <button className='absolute top-[-3px] left-0 bg-red-600 rounded-full text-white p-1 text-xs'
                 onClick={() => handleDelete(item.id)}><CloseIcon/></button>
             </div>
         </Draggable>
@@ -52,11 +53,14 @@ function App() {
 
 
   const handleAddNote = () => {
-    setNewNote(true);
-    setCount(count + 1);
-    setNotesList((prevNotes) => [...prevNotes, initialNote]);
-    localStorage.setItem('notesList', JSON.stringify(notesList));
-    setNewNote(false);
+      setNewNote(true);
+      setCount(count + 1);
+      // let list = localStorage.getItem('notesList');
+      // console.log(list);
+      setNotesList((prevNotes) => [...prevNotes, initialNote]);
+      // setNotesList([...(Array.from(localStorage.getItem('notesList'))), initialNote])
+      localStorage.setItem('notesList', JSON.stringify(notesList));
+      setNewNote(false);
   }
 
   useEffect(() => {
@@ -81,7 +85,7 @@ function App() {
           <Draggable>
               <div className='relative'>
                 <StickyNote note={initialNote} />
-                <button className='absolute top-0 left-[375px] bg-red-600 rounded-full text-white p-1'
+                <button className='absolute bg-red-600 rounded-full text-white p-1'
                   onClick={() => handleDelete(initialNote.id)}><CloseIcon /></button>
               </div>
           </Draggable> : ''

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import Draggable from 'react-draggable';
+import React, { useState, useEffect } from 'react';
 import { Note } from '../App';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -8,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import NotesIcon from '@mui/icons-material/Notes';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import { Tune } from '@mui/icons-material';
+import { NotInterestedSharp, Tune } from '@mui/icons-material';
 
 const theme = createTheme({
   components: {
@@ -45,40 +44,46 @@ const StickyNote: React.FC<NoteProps> = ({ note }) => {
 
   const [open, setOpen] = useState(note.isInitial);
 
-  const [noteData, setNoteData] = useState({
-    id: note.id,
-    title: note.title,
-    message: note.message,
-    date: note.date,
-    isInitial: true
-  })
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const {name , value} = e.target;
-    setNoteData({...noteData, [name]: value});
-};
+  const [noteData, setNoteData] = useState<Note>(() => {
+    return {
+      id: note.id,
+      title: note.title,
+      message: note.message,
+      date: note.date,
+      isInitial: true
+    };
+  });
 
   const [notesList, setNotesList] = useState<Note[]>(() => {
     const storedNotes = localStorage.getItem('notesList');
-    return storedNotes ? JSON.parse(storedNotes).map((note: any) => ({
-      ...note
-    })) : [];
+    return storedNotes ? JSON.parse(storedNotes) : [];
   });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+    setNoteData({ ...noteData, [name]: value });
+  };
 
   const handleOpen = () => {
     setOpen(!open);
-  }
+  };
 
-  const handleEdit = () => {
-    handleOpen();
-    console.log('is open');
-  }
+  const handleSave = () => {
+    const updatedNotesList = [...notesList, noteData];
+    console.log('updatedNotesList:', updatedNotesList);
+    console.log('notesList:', notesList);
+    console.log('noteData:', noteData);
+    setNotesList(updatedNotesList);
+    localStorage.setItem('notesList', JSON.stringify(updatedNotesList));
+    setOpen(!open);
+  };
+
 
 
   return (
-    <Draggable>
+    <div>
       {open === true ? 
-            <div className='w-[400px] h-fit bg-white cursor-move p-10 rounded-lg shadow-2xl'>
+            <div className='w-full h-full bg-white cursor-move p-10 rounded-2xl shadow-2xl'>
                 <ThemeProvider theme={theme}>
                     <Box
                       component="form"
@@ -119,10 +124,9 @@ const StickyNote: React.FC<NoteProps> = ({ note }) => {
                       />
                     </Box>
                     <div className='w-full flex justify-center items-center gap-5 mt-3'>
-                      <button className='w-[100px] flex justify-center items-center bg-blue-500 text-black text-xs p-1 rounded-2xl
-                      hover:text-white hover:bg-blue-700' onClick={handleEdit}>
-                          <EditIcon/>
-                          <p>ویرایش</p>
+                      <button className='w-[100px] flex justify-center items-center bg-blue-500 text-black text-xs px-1 py-2 rounded-2xl
+                      hover:text-white hover:bg-blue-700' onClick={handleSave}>
+                          <p>بستن</p>
                       </button>
                     </div>
                 </ThemeProvider>
@@ -141,7 +145,7 @@ const StickyNote: React.FC<NoteProps> = ({ note }) => {
               </div>
             </div>
           }
-    </Draggable>
+    </div>
   );
 };
 
