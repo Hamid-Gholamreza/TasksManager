@@ -7,7 +7,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import NotesIcon from '@mui/icons-material/Notes';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import { NotInterestedSharp, Tune } from '@mui/icons-material';
 
 const theme = createTheme({
   components: {
@@ -123,7 +122,7 @@ const StickyNote: React.FC<NoteProps> = ({ note }) => {
                     <div className='w-full flex justify-center items-center gap-5 mt-3'>
                       <button className='w-[100px] flex justify-center items-center bg-blue-500 text-black text-xs px-1 py-2 rounded-2xl
                       hover:text-white hover:bg-blue-700' onClick={handleSave}>
-                          <p>بستن</p>
+                          <p>ذخیره و بستن</p>
                       </button>
                     </div>
                 </ThemeProvider>

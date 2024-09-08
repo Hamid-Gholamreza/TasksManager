@@ -52,25 +52,6 @@ function App() {
 
   }
 
-  const updateNotes = () => {
-    console.log(notesList);
-  }
-
-
-    Notes = notesList.map((item: any, index: number) => {
-      return (
-          <Draggable>
-              <div className='w-[250px] h-fit relative'>
-                  <StickyNote key={index} note={item} />
-                  <button className='absolute top-[-3px] left-0 bg-red-600 rounded-full text-white p-1 text-xs'
-                  onClick={() => handleDelete(item.id)}><CloseIcon/></button>
-              </div>
-          </Draggable>
-      );
-    });
-
-    updateNotes();
-
 
   return (
     <div className='w-full h-[100vh] relative'>
@@ -81,7 +62,18 @@ function App() {
 
       {/* Notes Container */}
       <div className='h-[100vh]'>
-          {Notes}
+          {
+            notesList.map((item: any, index) => (
+                <Draggable key={item.id}>
+                  <div className='w-[250px] h-fit relative'>
+                      <StickyNote note={item} />
+                      <button className='absolute top-[-3px] left-0 bg-red-600 rounded-full text-white p-1 text-xs'
+                      onClick={() => handleDelete(item.id)}>
+                          <CloseIcon />
+                      </button>
+                  </div>
+                </Draggable>
+          ))}
       </div>
     </div>
   );
