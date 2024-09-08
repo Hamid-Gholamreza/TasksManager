@@ -3,16 +3,15 @@ import { Note } from '../App';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import NotesIcon from '@mui/icons-material/Notes';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs, { Dayjs } from 'dayjs';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+
 
     const theme = createTheme({
         components: {
@@ -44,7 +43,8 @@ import dayjs, { Dayjs } from 'dayjs';
     note: Note;
     }
 
-    const StickyNote: React.FC<NoteProps> = ({ note }) => {
+const StickyNote: React.FC<NoteProps> = ({ note }) => {
+
     const [open, setOpen] = useState(note.isInitial ? note.isInitial : false);
     const [selectedTime, setSelectedTime] = useState<Dayjs | null>(dayjs(note.date));
 
@@ -53,6 +53,7 @@ import dayjs, { Dayjs } from 'dayjs';
     //@ts-ignore
     setNoteData({ ...noteData, date: newValue ? newValue.toISOString() : '' });
     };
+    const [ring, setRing] = useState(false);
 
     const [noteData, setNoteData] = useState<Note>(() => {
     return {
@@ -84,10 +85,29 @@ import dayjs, { Dayjs } from 'dayjs';
         setOpen(!open);
     };
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const now = dayjs();
+            if (now.isSame(selectedTime, 'minute')) {
+                setRing(now.isSame(selectedTime, 'minute'));
+                console.log(selectedTime);
+                
+            } else {
+                setRing(now.isSame(selectedTime, 'minute'));
+                console.log(selectedTime);
+                }
+        }, 1000);
+        
+        return () => {
+            clearInterval(interval);
+            setRing(false);
+        }
+        }, [selectedTime]);
+
     return (
         <div>
             {open === true ? (
-                <div className='w-[400px] h-full bg-white cursor-move py-10 rounded-2xl shadow-2xl'>
+                <div className={`w-[400px] h-full ${ring && !note.isInitial ? 'bg-red-500' : 'bg-white'} cursor-move py-10 rounded-2xl shadow-2xl`}>
                     <ThemeProvider theme={theme}>
                         <Box
                         component="form"
@@ -142,16 +162,22 @@ import dayjs, { Dayjs } from 'dayjs';
                     </ThemeProvider>
                 </div>
             ) : (
-                <div onDoubleClick={handleOpen} className='w-[240px] h-[120px] bg-white rounded-2xl border-2 border-gray-300'>
-                    <div className='pr-3 pt-2'>
-                        <div className='flex flex-row-reverse gap-1 mt-1 text-sm'>
+                <div onDoubleClick={handleOpen} className={`w-fit h-fit ${ring ? 'bg-red-500' : 'bg-white'} rounded-2xl border-2 ${ring ? 'border-red-500' : 'border-green-500'}`}>
+                    <div className='p-2'>
+                        <div className='flex flex-row-reverse gap-1 mt-3 text-sm'>
+                            <TaskAltIcon />
                             <p className='w-full text-right'>{noteData.title}</p>
                         </div>
-                        <div className='flex flex-row-reverse gap-1 mt-2 text-sm'>
+                        <div className='flex flex-row-reverse gap-1 my-2 text-sm'>
                             <NotesIcon />
-                            <p>{noteData.message}</p>
+                            <p className='text-right'>{noteData.message}</p>
                         </div>
-                        <div>
+                        <div className='my-2 flex flex-row-reverse justify-center items-center gap-4'>
+                            <p className='text-right'>:اعلان</p>
+                            <p>{selectedTime?.toDate().toLocaleString()}</p>
+
+                        </div>
+                        <div className='mr-1'>
                             <p className='text-xs text-right'>{note.timeSaved} ثبت شده در</p>
                         </div>
                     </div>

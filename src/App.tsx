@@ -20,7 +20,6 @@ function App() {
 
   const storedNotes = localStorage.getItem('notesList');
   const parsedNotes = storedNotes ? Array.from(JSON.parse(storedNotes)) : [];
-  const listLength = parsedNotes.length;
   const [notesList, setNotesList] = useState(parsedNotes);
 
 
@@ -58,7 +57,7 @@ function App() {
     <div className='w-full h-[100vh] relative'>
       <div className='w-full h-[200px] bg-blue-600 flex flex-col justify-center items-center gap-8'>
         <h1 className='text-xl text-center'>برای اضافه کردن یادداشت جدید کلیک کنید</h1>
-        <button className='w-12 h-12 bg-green-500 rounded-lg text-2xl text-white' onClick={handleAddNote}>+</button>
+        <button className='w-12 h-12 bg-green-500 rounded-lg text-2xl text-white hover:bg-green-800' onClick={handleAddNote}>+</button>
       </div>
       {/* Notes Container */}
       <div className='h-[100vh]'>
