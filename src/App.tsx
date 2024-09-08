@@ -3,14 +3,16 @@ import './App.css';
 import StickyNote from './components/StickyNote';
 import CloseIcon from '@mui/icons-material/Close';
 import Draggable from 'react-draggable';
+import dayjs, { Dayjs } from 'dayjs';
 
 
 export interface Note {
   id: number,
   title: string,
   message: string,
-  date: string,
-  isInitial: boolean
+  date: Dayjs,
+  isInitial: boolean,
+  timeSaved: string
 }
 
 
@@ -20,8 +22,6 @@ function App() {
   const parsedNotes = storedNotes ? Array.from(JSON.parse(storedNotes)) : [];
   const listLength = parsedNotes.length;
   const [notesList, setNotesList] = useState(parsedNotes);
-  let Notes;
-
 
 
 
@@ -29,8 +29,9 @@ function App() {
     id: parsedNotes.length + 1,
     title: '',
     message: '',
-    date: '',
-    isInitial: true
+    date: dayjs(),
+    isInitial: true,
+    timeSaved: new Date().toLocaleString()
   }
 
   const handleDelete = (id: number) => {
@@ -59,7 +60,6 @@ function App() {
         <h1 className='text-xl text-center'>برای اضافه کردن یادداشت جدید کلیک کنید</h1>
         <button className='w-12 h-12 bg-green-500 rounded-lg text-2xl text-white' onClick={handleAddNote}>+</button>
       </div>
-
       {/* Notes Container */}
       <div className='h-[100vh]'>
           {
