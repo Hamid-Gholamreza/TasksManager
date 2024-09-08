@@ -42,7 +42,8 @@ interface NoteProps {
 
 const StickyNote: React.FC<NoteProps> = ({ note }) => {
 
-  const [open, setOpen] = useState(note.isInitial);
+  const [open, setOpen] = useState(note.isInitial ? note.isInitial : false);
+
 
   const [noteData, setNoteData] = useState<Note>(() => {
     return {
@@ -50,14 +51,10 @@ const StickyNote: React.FC<NoteProps> = ({ note }) => {
       title: note.title,
       message: note.message,
       date: note.date,
-      isInitial: true
+      isInitial: false
     };
   });
 
-  const [notesList, setNotesList] = useState<Note[]>(() => {
-    const storedNotes = localStorage.getItem('notesList');
-    return storedNotes ? JSON.parse(storedNotes) : [];
-  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -69,12 +66,12 @@ const StickyNote: React.FC<NoteProps> = ({ note }) => {
   };
 
   const handleSave = () => {
-    const updatedNotesList = [...notesList, noteData];
-    console.log('updatedNotesList:', updatedNotesList);
-    console.log('notesList:', notesList);
-    console.log('noteData:', noteData);
-    setNotesList(updatedNotesList);
-    localStorage.setItem('notesList', JSON.stringify(updatedNotesList));
+    const list = localStorage.getItem('notesList');
+    const arrList = list?.length ? Array.from(JSON.parse(list)) : [];
+    let idTofind = arrList.find((item: any) => item.id === noteData.id);
+    const index = arrList.indexOf(idTofind);
+    arrList[index] = noteData;
+    localStorage.setItem('notesList', JSON.stringify(arrList));
     setOpen(!open);
   };
 
